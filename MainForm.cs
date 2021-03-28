@@ -1,6 +1,4 @@
-﻿using CefSharp.WinForms;
-using CefSharp;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -9,32 +7,110 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using CefSharp.Web;
 using System.IO;
 using System.Diagnostics;
+using SimpleMarkdown.Properties;
+using Markdig;
 
 namespace SimpleMarkdown
 {
     public partial class MainForm : Form
     {
-        private ChromiumWebBrowser browser;
+        private const string CSS_FILE = "Resources\\markdown.css";
+        private const string README_FILE = "Resources\\readme.md";
+        private string css = File.ReadAllText(CSS_FILE);
 
-        private string css = File.ReadAllText("markdown.css");
+        private bool isTempFile;
 
-        public MainForm()
+        private string currentFilePath_;
+        private string CurrentFilePath
         {
-            InitializeComponent();
-            return;
-            Cef.Initialize(new CefSettings());
-            browser = new ChromiumWebBrowser(new HtmlString(""));
-            splitContainer.Panel2.Controls.Add(browser);
-            browser.Dock = DockStyle.Fill;
+            get { return currentFilePath_; }
+            set
+            {
+                currentFilePath_ = value;
+                RefreshTitle();
+            }
         }
+
+        private bool isSaved_;
+        private bool IsSaved
+        {
+            get { return isSaved_; }
+            set
+            {
+                isSaved_ = value;
+                RefreshTitle();
+            }
+        }
+
+        private void RefreshTitle()
+        {
+            Text = $"{(!IsSaved ? "*" : "")}{Path.GetFileName(CurrentFilePath)} - SimpleMarkdown";
+        }
+
+        public MainForm(string filePath)
+        {
+            Icon = Resources.icon;
+            InitializeComponent();
+            MouseWheel += MainForm_MouseWheel;
+            if(filePath != null)
+            {
+                InitOpenFile(filePath);
+            }
+            else
+            {
+                CurrentFilePath = "새 문서";
+                isTempFile = true;
+                IsSaved = true;
+                try
+                {
+                    if(File.Exists(README_FILE))
+                    {
+                        textBox.Text = File.ReadAllText(README_FILE);
+                    }   
+                }
+                catch(Exception e)
+                {
+                    Trace.WriteLine(e.Message);
+                }
+            }
+        }
+
+        private void MainForm_MouseWheel(object sender, MouseEventArgs e)
+        {
+            if(Control.ModifierKeys == Keys.Control)
+            {
+                textBox.Font = new Font(textBox.Font.FontFamily, textBox.Font.Size + e.Delta * 0.005f);
+            }
+        }
+
+        private void InitOpenFile(string filePath)
+        {
+            CurrentFilePath = filePath;
+            try
+            {
+                textBox.Text = File.ReadAllText(filePath);
+                isTempFile = false;
+                IsSaved = true;
+            }
+            catch(Exception e)
+            {
+                Trace.WriteLine(e);
+            }
+        }
+
+        private static MarkdownPipeline pipeline;
 
         private void textBox_TextChanged(object sender, EventArgs e)
         {
-            //browser.LoadHtml(CommonMark.CommonMarkConverter.Convert(textBox.Text));
-            webBrowser.DocumentText = CreateHtmlWithCSS(CommonMark.CommonMarkConverter.Convert(textBox.Text));
+            IsSaved = false;
+            //webBrowser.DocumentText = CreateHtmlWithCSS(CommonMark.CommonMarkConverter.Convert(textBox.Text));
+            if (pipeline == null)
+            {
+                pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
+            }
+            webBrowser.DocumentText = CreateHtmlWithCSS(Markdown.ToHtml(textBox.Text, pipeline));
         }
 
         private void webBrowser_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
@@ -48,6 +124,109 @@ namespace SimpleMarkdown
         private string CreateHtmlWithCSS(string html)
         {
             return $"<style>{css}</style>{html}";
+        }
+
+        private void 열기ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var dialog = new OpenFileDialog();
+            if(dialog.ShowDialog() == DialogResult.OK)
+            {
+                if (!IsSaved)
+                {
+                    var result = MessageBox.Show("파일을 저장하시겠습니까?", "정보", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Information);
+                    if (result == DialogResult.Yes)
+                    {
+                        SaveFile();
+                    }
+                    else if (result == DialogResult.Cancel)
+                    {
+                        return;
+                    }
+                }
+                InitOpenFile(dialog.FileName);
+            }
+        }
+
+        private void 저장ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SaveFile();
+        }
+
+        private void SaveFile()
+        {
+            if(isTempFile)
+            {
+                var dialog = new SaveFileDialog()
+                {
+                    FileName = "새 문서",
+                    Filter = "마크다운 문서|*.md|텍스트 파일|*.txt|파일|*.*"
+                };
+                if(dialog.ShowDialog() == DialogResult.OK)
+                {
+                    try
+                    {
+                        File.WriteAllText(dialog.FileName, textBox.Text);
+                        CurrentFilePath = dialog.FileName;
+                        IsSaved = true;
+                        isTempFile = false;
+                    }
+                    catch(Exception e)
+                    {
+                        MessageBox.Show(e.Message);
+                    }
+                }
+            }
+            else
+            {
+                try
+                {
+                    File.WriteAllText(CurrentFilePath, textBox.Text);
+                    IsSaved = true;
+                }
+                catch(Exception e)
+                {
+                    MessageBox.Show(e.Message);
+                }
+            }
+        }
+
+        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if(!IsSaved)
+            {
+                var result = MessageBox.Show("파일을 저장하시겠습니까?", "정보", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Information);
+                if (result == DialogResult.Yes)
+                {
+                    SaveFile();    
+                }
+                else if(result == DialogResult.Cancel)
+                {
+                    e.Cancel = true;
+                }
+            }
+        }
+
+        private void 새로만들기ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Process.Start(Process.GetCurrentProcess().ProcessName);
+        }
+
+        private void 기본ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            splitContainer.Panel1Collapsed = false;
+            splitContainer.Panel2Collapsed = false;
+        }
+
+        private void 편집기ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            splitContainer.Panel1Collapsed = false;
+            splitContainer.Panel2Collapsed = true;
+        }
+
+        private void 뷰어ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            splitContainer.Panel1Collapsed = true;
+            splitContainer.Panel2Collapsed = false;
         }
     }
 }

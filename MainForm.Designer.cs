@@ -29,10 +29,16 @@ namespace SimpleMarkdown
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.menuStrip = new System.Windows.Forms.MenuStrip();
             this.파일ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.새로만들기ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.열기ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.저장ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.창ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.기본ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.편집기ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.뷰어ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.splitContainer = new System.Windows.Forms.SplitContainer();
             this.textBox = new System.Windows.Forms.TextBox();
             this.webBrowser = new System.Windows.Forms.WebBrowser();
@@ -46,7 +52,8 @@ namespace SimpleMarkdown
             // menuStrip
             // 
             this.menuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.파일ToolStripMenuItem});
+            this.파일ToolStripMenuItem,
+            this.창ToolStripMenuItem});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.Name = "menuStrip";
             this.menuStrip.Size = new System.Drawing.Size(800, 24);
@@ -57,7 +64,8 @@ namespace SimpleMarkdown
             // 
             this.파일ToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.새로만들기ToolStripMenuItem,
-            this.열기ToolStripMenuItem});
+            this.열기ToolStripMenuItem,
+            this.저장ToolStripMenuItem});
             this.파일ToolStripMenuItem.Name = "파일ToolStripMenuItem";
             this.파일ToolStripMenuItem.Size = new System.Drawing.Size(43, 20);
             this.파일ToolStripMenuItem.Text = "파일";
@@ -65,14 +73,60 @@ namespace SimpleMarkdown
             // 새로만들기ToolStripMenuItem
             // 
             this.새로만들기ToolStripMenuItem.Name = "새로만들기ToolStripMenuItem";
-            this.새로만들기ToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
+            this.새로만들기ToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
+            this.새로만들기ToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
             this.새로만들기ToolStripMenuItem.Text = "새로 만들기";
+            this.새로만들기ToolStripMenuItem.Click += new System.EventHandler(this.새로만들기ToolStripMenuItem_Click);
             // 
             // 열기ToolStripMenuItem
             // 
             this.열기ToolStripMenuItem.Name = "열기ToolStripMenuItem";
-            this.열기ToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
+            this.열기ToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
+            this.열기ToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
             this.열기ToolStripMenuItem.Text = "열기";
+            this.열기ToolStripMenuItem.Click += new System.EventHandler(this.열기ToolStripMenuItem_Click);
+            // 
+            // 저장ToolStripMenuItem
+            // 
+            this.저장ToolStripMenuItem.Name = "저장ToolStripMenuItem";
+            this.저장ToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
+            this.저장ToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
+            this.저장ToolStripMenuItem.Text = "저장";
+            this.저장ToolStripMenuItem.Click += new System.EventHandler(this.저장ToolStripMenuItem_Click);
+            // 
+            // 창ToolStripMenuItem
+            // 
+            this.창ToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.기본ToolStripMenuItem,
+            this.편집기ToolStripMenuItem,
+            this.뷰어ToolStripMenuItem});
+            this.창ToolStripMenuItem.Name = "창ToolStripMenuItem";
+            this.창ToolStripMenuItem.Size = new System.Drawing.Size(31, 20);
+            this.창ToolStripMenuItem.Text = "창";
+            // 
+            // 기본ToolStripMenuItem
+            // 
+            this.기본ToolStripMenuItem.Name = "기본ToolStripMenuItem";
+            this.기본ToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.D1)));
+            this.기본ToolStripMenuItem.Size = new System.Drawing.Size(167, 22);
+            this.기본ToolStripMenuItem.Text = "기본 화면";
+            this.기본ToolStripMenuItem.Click += new System.EventHandler(this.기본ToolStripMenuItem_Click);
+            // 
+            // 편집기ToolStripMenuItem
+            // 
+            this.편집기ToolStripMenuItem.Name = "편집기ToolStripMenuItem";
+            this.편집기ToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.D2)));
+            this.편집기ToolStripMenuItem.Size = new System.Drawing.Size(167, 22);
+            this.편집기ToolStripMenuItem.Text = "편집기";
+            this.편집기ToolStripMenuItem.Click += new System.EventHandler(this.편집기ToolStripMenuItem_Click);
+            // 
+            // 뷰어ToolStripMenuItem
+            // 
+            this.뷰어ToolStripMenuItem.Name = "뷰어ToolStripMenuItem";
+            this.뷰어ToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.D3)));
+            this.뷰어ToolStripMenuItem.Size = new System.Drawing.Size(167, 22);
+            this.뷰어ToolStripMenuItem.Text = "뷰어";
+            this.뷰어ToolStripMenuItem.Click += new System.EventHandler(this.뷰어ToolStripMenuItem_Click);
             // 
             // splitContainer
             // 
@@ -119,9 +173,11 @@ namespace SimpleMarkdown
             this.ClientSize = new System.Drawing.Size(800, 450);
             this.Controls.Add(this.splitContainer);
             this.Controls.Add(this.menuStrip);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip;
             this.Name = "MainForm";
             this.Text = "SimpleMarkdown";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
             this.menuStrip.ResumeLayout(false);
             this.menuStrip.PerformLayout();
             this.splitContainer.Panel1.ResumeLayout(false);
@@ -143,6 +199,11 @@ namespace SimpleMarkdown
         private System.Windows.Forms.SplitContainer splitContainer;
         private System.Windows.Forms.TextBox textBox;
         private System.Windows.Forms.WebBrowser webBrowser;
+        private System.Windows.Forms.ToolStripMenuItem 저장ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 창ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 기본ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 편집기ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 뷰어ToolStripMenuItem;
     }
 }
 
