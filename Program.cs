@@ -14,11 +14,18 @@ namespace SimpleMarkdown
         [STAThread]
         static void Main(string[] args)
         {
-            string filePath = args?.FirstOrDefault();
+            try
+            {
+                string filePath = args?.FirstOrDefault();
 
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new MainForm(filePath));
+                Application.EnableVisualStyles();
+                Application.SetCompatibleTextRenderingDefault(false);
+                Application.Run(new MainForm(filePath));
+            }
+            catch(Exception e)
+            {
+                MessageBox.Show(e.Message);
+            }
         }
     }
 }

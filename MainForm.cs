@@ -16,6 +16,11 @@ namespace SimpleMarkdown
 {
     public partial class MainForm : Form
     {
+        static MainForm()
+        {
+            Directory.SetCurrentDirectory(AppDomain.CurrentDomain.BaseDirectory);
+        }
+
         private const string CSS_FILE = "Resources\\markdown.css";
         private const string README_FILE = "Resources\\readme.md";
         private string css = File.ReadAllText(CSS_FILE);
@@ -60,9 +65,6 @@ namespace SimpleMarkdown
             }
             else
             {
-                CurrentFilePath = "새 문서";
-                isTempFile = true;
-                IsSaved = true;
                 try
                 {
                     if(File.Exists(README_FILE))
@@ -74,6 +76,9 @@ namespace SimpleMarkdown
                 {
                     Trace.WriteLine(e.Message);
                 }
+                CurrentFilePath = "새 문서";
+                isTempFile = true;
+                IsSaved = true;
             }
         }
 
@@ -105,7 +110,6 @@ namespace SimpleMarkdown
         private void textBox_TextChanged(object sender, EventArgs e)
         {
             IsSaved = false;
-            //webBrowser.DocumentText = CreateHtmlWithCSS(CommonMark.CommonMarkConverter.Convert(textBox.Text));
             if (pipeline == null)
             {
                 pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
@@ -197,7 +201,11 @@ namespace SimpleMarkdown
                 var result = MessageBox.Show("파일을 저장하시겠습니까?", "정보", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Information);
                 if (result == DialogResult.Yes)
                 {
-                    SaveFile();    
+                    SaveFile();
+                    if(!IsSaved)
+                    {
+                        e.Cancel = true;
+                    }
                 }
                 else if(result == DialogResult.Cancel)
                 {
