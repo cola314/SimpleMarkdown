@@ -20,4 +20,8 @@
 |뷰어     |Ctrl + 3|뷰어 모드        |
 
 ### 커스텀 기능
-* TODO
+* C:\Program Files (x86)\SimpleMarkdown\Resources
+* **markdown.css**로 뷰어 스타일 변경 가능
+  * 기본 스타일 : https://gist.github.com/andyferra/2554919
+* **readme.md** 초기 화면으로 수정 가능
+  * 초기화면 불필요시 **readme.md** 삭제
