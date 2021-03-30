@@ -59,6 +59,10 @@ namespace SimpleMarkdown
             Icon = Resources.icon;
             InitializeComponent();
             MouseWheel += MainForm_MouseWheel;
+            webBrowser.DocumentCompleted += (s, e) =>
+            {
+                webBrowser.Document.Body.ScrollTop = preScroll;
+            };
             if(filePath != null)
             {
                 InitOpenFile(filePath);
@@ -106,6 +110,7 @@ namespace SimpleMarkdown
         }
 
         private static MarkdownPipeline pipeline;
+        private static int preScroll;
 
         private void textBox_TextChanged(object sender, EventArgs e)
         {
@@ -114,6 +119,7 @@ namespace SimpleMarkdown
             {
                 pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
             }
+            preScroll = webBrowser.Document?.Body.ScrollTop ?? 0;
             webBrowser.DocumentText = CreateHtmlWithCSS(Markdown.ToHtml(textBox.Text, pipeline));
         }
 
