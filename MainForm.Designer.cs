@@ -56,7 +56,7 @@ namespace SimpleMarkdown
             this.창ToolStripMenuItem});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.Name = "menuStrip";
-            this.menuStrip.Size = new System.Drawing.Size(800, 24);
+            this.menuStrip.Size = new System.Drawing.Size(1184, 24);
             this.menuStrip.TabIndex = 0;
             this.menuStrip.Text = "menuStrip1";
             // 
@@ -141,8 +141,8 @@ namespace SimpleMarkdown
             // splitContainer.Panel2
             // 
             this.splitContainer.Panel2.Controls.Add(this.webBrowser);
-            this.splitContainer.Size = new System.Drawing.Size(800, 426);
-            this.splitContainer.SplitterDistance = 388;
+            this.splitContainer.Size = new System.Drawing.Size(1184, 837);
+            this.splitContainer.SplitterDistance = 574;
             this.splitContainer.TabIndex = 1;
             // 
             // textBox
@@ -153,7 +153,7 @@ namespace SimpleMarkdown
             this.textBox.Multiline = true;
             this.textBox.Name = "textBox";
             this.textBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBox.Size = new System.Drawing.Size(388, 426);
+            this.textBox.Size = new System.Drawing.Size(574, 837);
             this.textBox.TabIndex = 0;
             this.textBox.TextChanged += new System.EventHandler(this.textBox_TextChanged);
             // 
@@ -163,20 +163,21 @@ namespace SimpleMarkdown
             this.webBrowser.Location = new System.Drawing.Point(0, 0);
             this.webBrowser.MinimumSize = new System.Drawing.Size(20, 20);
             this.webBrowser.Name = "webBrowser";
-            this.webBrowser.Size = new System.Drawing.Size(408, 426);
+            this.webBrowser.Size = new System.Drawing.Size(606, 837);
             this.webBrowser.TabIndex = 0;
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.ClientSize = new System.Drawing.Size(1184, 861);
             this.Controls.Add(this.splitContainer);
             this.Controls.Add(this.menuStrip);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip;
             this.Name = "MainForm";
             this.Text = "SimpleMarkdown";
+            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
             this.menuStrip.ResumeLayout(false);
             this.menuStrip.PerformLayout();
