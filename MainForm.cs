@@ -49,6 +49,8 @@ namespace SimpleMarkdown
             }
         }
 
+        private string BodyText { get; set; }
+
         private void RefreshTitle()
         {
             Text = $"{(!IsSaved ? "*" : "")}{Path.GetFileName(CurrentFilePath)} - SimpleMarkdown";
@@ -114,12 +116,21 @@ namespace SimpleMarkdown
 
         private void textBox_TextChanged(object sender, EventArgs e)
         {
+            BodyText = textBox.Text.Replace("\r\n", "\n").Replace("\n", "\r\n");
+            if (BodyText != textBox.Text)
+            {
+                textBox.Text = BodyText;
+            }
+            else
+            {
+                return;
+            }
             IsSaved = false;
             if (pipeline == null)
             {
                 pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
             }
-            preScroll = webBrowser.Document?.Body.ScrollTop ?? 0;
+            preScroll = webBrowser.Document?.Body?.ScrollTop ?? 0;
             webBrowser.DocumentText = CreateHtmlWithCSS(Markdown.ToHtml(textBox.Text, pipeline));
         }
 
