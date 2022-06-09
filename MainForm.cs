@@ -11,6 +11,7 @@ using System.IO;
 using System.Diagnostics;
 using SimpleMarkdown.Properties;
 using Markdig;
+using SimpleMarkdown.Utils;
 
 namespace SimpleMarkdown
 {
@@ -60,6 +61,9 @@ namespace SimpleMarkdown
         {
             Icon = Resources.icon;
             InitializeComponent();
+
+            TextBoxTabSizeSetter.SetTabWidth(textBox, 4);
+
             MouseWheel += MainForm_MouseWheel;
             webBrowser.DocumentCompleted += (s, e) =>
             {
