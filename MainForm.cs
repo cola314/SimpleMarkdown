@@ -116,9 +116,10 @@ namespace SimpleMarkdown
 
         private void textBox_TextChanged(object sender, EventArgs e)
         {
-            BodyText = textBox.Text.Replace("\r\n", "\n").Replace("\n", "\r\n");
-            if (BodyText != textBox.Text)
+            var text = textBox.Text.Replace("\r\n", "\n").Replace("\n", "\r\n");
+            if (BodyText != text)
             {
+                BodyText = text;
                 textBox.Text = BodyText;
             }
             else
