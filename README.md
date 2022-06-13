@@ -1,4 +1,6 @@
-## SimpleMarkdown
+[![MSBuild](https://github.com/cola314/SimpleMarkdown/actions/workflows/msbuild.yml/badge.svg)](https://github.com/cola314/SimpleMarkdown/actions/workflows/msbuild.yml)
+
+# SimpleMarkdown
 
 >간단한 문서 작업을 위한 마크다운 편집기 / 뷰어
 
