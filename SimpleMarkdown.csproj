@@ -152,4 +152,7 @@
 )
 xcopy "$(SolutionDir)Resources\*.*" "$(TargetDir)\Resources" /y</PreBuildEvent>
   </PropertyGroup>
+  <PropertyGroup>
+    <PostBuildEvent>makensis "$(ProjectDir)Setup\setup.nsi"</PostBuildEvent>
+  </PropertyGroup>
 </Project>
