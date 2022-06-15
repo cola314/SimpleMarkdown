@@ -14,14 +14,13 @@ namespace SimpleMarkdown
         private readonly MarkdownService _markdownService;
         private readonly WebBrowserWrapper _browser;
         private readonly TextBoxWrapper _editorTextBox;
+        private readonly ReadMeService _readMeService;
 
         static MainForm()
         {
             Directory.SetCurrentDirectory(AppDomain.CurrentDomain.BaseDirectory);
         }
 
-        private const string README_FILE = "Resources\\readme.md";
-        
         private bool isTempFile;
 
         private string currentFilePath_;
@@ -51,9 +50,10 @@ namespace SimpleMarkdown
             Text = $"{(!IsSaved ? "*" : "")}{Path.GetFileName(CurrentFilePath)} - SimpleMarkdown";
         }
 
-        public MainForm(string filePath, MarkdownService markdownService)
+        public MainForm(string filePath, MarkdownService markdownService, ReadMeService readMeService)
         {
             _markdownService = markdownService;
+            _readMeService = readMeService;
 
             Icon = Resources.icon;
             InitializeComponent();
@@ -74,10 +74,7 @@ namespace SimpleMarkdown
             {
                 try
                 {
-                    if(File.Exists(README_FILE))
-                    {
-                        textBox.Text = File.ReadAllText(README_FILE);
-                    }   
+                    textBox.Text = _readMeService.GetReadMeContent();
                 }
                 catch(Exception e)
                 {

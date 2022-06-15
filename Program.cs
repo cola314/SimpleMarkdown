@@ -21,7 +21,7 @@ namespace SimpleMarkdown
 
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
-                Application.Run(new MainForm(filePath, new MarkdownService()));
+                Application.Run(new MainForm(filePath, new MarkdownService(), new ReadMeService()));
             }
             catch(Exception e)
             {
