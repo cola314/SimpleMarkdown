@@ -1,31 +1,25 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
 using System.Diagnostics;
 using SimpleMarkdown.Properties;
-using Markdig;
+using SimpleMarkdown.Models;
 using SimpleMarkdown.Utils;
 
 namespace SimpleMarkdown
 {
     public partial class MainForm : Form
     {
+        private readonly MarkdownService _markdownService;
+
         static MainForm()
         {
             Directory.SetCurrentDirectory(AppDomain.CurrentDomain.BaseDirectory);
         }
 
-        private const string CSS_FILE = "Resources\\markdown.css";
         private const string README_FILE = "Resources\\readme.md";
-        private string css = File.ReadAllText(CSS_FILE);
-
+        
         private bool isTempFile;
 
         private string currentFilePath_;
@@ -44,7 +38,7 @@ namespace SimpleMarkdown
         {
             get { return isSaved_; }
             set
-            {
+            {  
                 isSaved_ = value;
                 RefreshTitle();
             }
@@ -57,8 +51,10 @@ namespace SimpleMarkdown
             Text = $"{(!IsSaved ? "*" : "")}{Path.GetFileName(CurrentFilePath)} - SimpleMarkdown";
         }
 
-        public MainForm(string filePath)
+        public MainForm(string filePath, MarkdownService markdownService)
         {
+            _markdownService = markdownService;
+
             Icon = Resources.icon;
             InitializeComponent();
 
@@ -115,7 +111,6 @@ namespace SimpleMarkdown
             }
         }
 
-        private static MarkdownPipeline pipeline;
         private static int preScroll;
 
         private void textBox_TextChanged(object sender, EventArgs e)
@@ -131,25 +126,9 @@ namespace SimpleMarkdown
                 return;
             }
             IsSaved = false;
-            if (pipeline == null)
-            {
-                pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
-            }
+
             preScroll = webBrowser.Document?.Body?.ScrollTop ?? 0;
-            webBrowser.DocumentText = CreateHtmlWithCSS(Markdown.ToHtml(textBox.Text, pipeline));
-        }
-
-        private void webBrowser_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
-        {
-            HtmlElement head = webBrowser.Document.GetElementsByTagName("head")[0];
-            HtmlElement styleEl = webBrowser.Document.CreateElement("style");
-            styleEl.InnerHtml = @"body {background-color:transparent !important; margin: 0px auto; overflow: hidden; }.live__content{display:none;}.chat__footer{display:none;}.chat__header{display:none}#header{display:none}.in-chat-avatar{display:none}.message__username{font-style:italic;font-weight: 800!important;color:ff8f0f !important}.message__text{font-style:italic;font-weight: 400!important;color:ff8f0f !important}.chat__content{ background-color:transparent  !important}.chat{ background-color:transparent  !important}";
-            head.AppendChild(styleEl);
-        }
-
-        private string CreateHtmlWithCSS(string html)
-        {
-            return $"<style>{css}</style>{html}";
+            webBrowser.DocumentText = _markdownService.GenerateHtml(textBox.Text);
         }
 
         private void 열기ToolStripMenuItem_Click(object sender, EventArgs e)

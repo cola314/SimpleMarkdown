@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using SimpleMarkdown.Models;
 
 namespace SimpleMarkdown
 {
@@ -20,7 +21,7 @@ namespace SimpleMarkdown
 
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
-                Application.Run(new MainForm(filePath));
+                Application.Run(new MainForm(filePath, new MarkdownService()));
             }
             catch(Exception e)
             {
