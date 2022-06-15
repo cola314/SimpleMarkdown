@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using SimpleMarkdown.Models;
 
@@ -15,6 +14,9 @@ namespace SimpleMarkdown
         [STAThread]
         static void Main(string[] args)
         {
+            // 프로그램 베이스 경로를 exe 파일이 있는 경로로 설정
+            Directory.SetCurrentDirectory(AppDomain.CurrentDomain.BaseDirectory);
+
             try
             {
                 string filePath = args?.FirstOrDefault();

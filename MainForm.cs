@@ -16,11 +16,6 @@ namespace SimpleMarkdown
         private readonly TextBoxWrapper _editorTextBox;
         private readonly ReadMeService _readMeService;
 
-        static MainForm()
-        {
-            Directory.SetCurrentDirectory(AppDomain.CurrentDomain.BaseDirectory);
-        }
-
         private bool isTempFile;
 
         private string currentFilePath_;
@@ -39,7 +34,7 @@ namespace SimpleMarkdown
         {
             get { return isSaved_; }
             set
-            {  
+            {
                 isSaved_ = value;
                 RefreshTitle();
             }
@@ -65,8 +60,8 @@ namespace SimpleMarkdown
             TextBoxTabSizeSetter.SetTabWidth(textBox, 4);
 
             MouseWheel += MainForm_MouseWheel;
-            
-            if(filePath != null)
+
+            if (filePath != null)
             {
                 InitOpenFile(filePath);
             }
@@ -76,7 +71,7 @@ namespace SimpleMarkdown
                 {
                     textBox.Text = _readMeService.GetReadMeContent();
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     Trace.WriteLine(e.Message);
                 }
@@ -95,7 +90,7 @@ namespace SimpleMarkdown
 
         private void MainForm_MouseWheel(object sender, MouseEventArgs e)
         {
-            if(Control.ModifierKeys == Keys.Control)
+            if (Control.ModifierKeys == Keys.Control)
             {
                 textBox.Font = new Font(textBox.Font.FontFamily, textBox.Font.Size + e.Delta * 0.005f);
             }
@@ -110,7 +105,7 @@ namespace SimpleMarkdown
                 isTempFile = false;
                 IsSaved = true;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Trace.WriteLine(e);
             }
@@ -119,7 +114,7 @@ namespace SimpleMarkdown
         private void 열기ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var dialog = new OpenFileDialog();
-            if(dialog.ShowDialog() == DialogResult.OK)
+            if (dialog.ShowDialog() == DialogResult.OK)
             {
                 if (!IsSaved)
                 {
@@ -144,14 +139,14 @@ namespace SimpleMarkdown
 
         private void SaveFile()
         {
-            if(isTempFile)
+            if (isTempFile)
             {
                 var dialog = new SaveFileDialog()
                 {
                     FileName = "새 문서",
                     Filter = "마크다운 문서|*.md|텍스트 파일|*.txt|파일|*.*"
                 };
-                if(dialog.ShowDialog() == DialogResult.OK)
+                if (dialog.ShowDialog() == DialogResult.OK)
                 {
                     try
                     {
@@ -160,7 +155,7 @@ namespace SimpleMarkdown
                         IsSaved = true;
                         isTempFile = false;
                     }
-                    catch(Exception e)
+                    catch (Exception e)
                     {
                         MessageBox.Show(e.Message);
                     }
@@ -173,7 +168,7 @@ namespace SimpleMarkdown
                     File.WriteAllText(CurrentFilePath, textBox.Text);
                     IsSaved = true;
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     MessageBox.Show(e.Message);
                 }
@@ -182,18 +177,18 @@ namespace SimpleMarkdown
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if(!IsSaved)
+            if (!IsSaved)
             {
                 var result = MessageBox.Show("파일을 저장하시겠습니까?", "정보", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Information);
                 if (result == DialogResult.Yes)
                 {
                     SaveFile();
-                    if(!IsSaved)
+                    if (!IsSaved)
                     {
                         e.Cancel = true;
                     }
                 }
-                else if(result == DialogResult.Cancel)
+                else if (result == DialogResult.Cancel)
                 {
                     e.Cancel = true;
                 }
