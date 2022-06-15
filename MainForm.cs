@@ -12,6 +12,7 @@ namespace SimpleMarkdown
     public partial class MainForm : Form
     {
         private readonly MarkdownService _markdownService;
+        private readonly WebBrowserWrapper _browser;
 
         static MainForm()
         {
@@ -58,13 +59,12 @@ namespace SimpleMarkdown
             Icon = Resources.icon;
             InitializeComponent();
 
+            _browser = new WebBrowserWrapper(webBrowser);
+
             TextBoxTabSizeSetter.SetTabWidth(textBox, 4);
 
             MouseWheel += MainForm_MouseWheel;
-            webBrowser.DocumentCompleted += (s, e) =>
-            {
-                webBrowser.Document.Body.ScrollTop = preScroll;
-            };
+            
             if(filePath != null)
             {
                 InitOpenFile(filePath);
@@ -111,8 +111,6 @@ namespace SimpleMarkdown
             }
         }
 
-        private static int preScroll;
-
         private void textBox_TextChanged(object sender, EventArgs e)
         {
             var text = textBox.Text.Replace("\r\n", "\n").Replace("\n", "\r\n");
@@ -127,8 +125,8 @@ namespace SimpleMarkdown
             }
             IsSaved = false;
 
-            preScroll = webBrowser.Document?.Body?.ScrollTop ?? 0;
-            webBrowser.DocumentText = _markdownService.GenerateHtml(textBox.Text);
+            var html = _markdownService.GenerateHtml(textBox.Text);
+            _browser.SetContent(html);
         }
 
         private void 열기ToolStripMenuItem_Click(object sender, EventArgs e)
