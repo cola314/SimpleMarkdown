@@ -13,6 +13,7 @@ namespace SimpleMarkdown
     {
         private readonly MarkdownService _markdownService;
         private readonly WebBrowserWrapper _browser;
+        private readonly TextBoxWrapper _editorTextBox;
 
         static MainForm()
         {
@@ -45,8 +46,6 @@ namespace SimpleMarkdown
             }
         }
 
-        private string BodyText { get; set; }
-
         private void RefreshTitle()
         {
             Text = $"{(!IsSaved ? "*" : "")}{Path.GetFileName(CurrentFilePath)} - SimpleMarkdown";
@@ -60,6 +59,8 @@ namespace SimpleMarkdown
             InitializeComponent();
 
             _browser = new WebBrowserWrapper(webBrowser);
+            _editorTextBox = new TextBoxWrapper(textBox);
+            _editorTextBox.OnTextChanged += EditorTextBoxOnOnTextChanged;
 
             TextBoxTabSizeSetter.SetTabWidth(textBox, 4);
 
@@ -88,6 +89,13 @@ namespace SimpleMarkdown
             }
         }
 
+        private void EditorTextBoxOnOnTextChanged(string newText)
+        {
+            var html = _markdownService.GenerateHtml(newText);
+            _browser.SetContent(html);
+            IsSaved = false;
+        }
+
         private void MainForm_MouseWheel(object sender, MouseEventArgs e)
         {
             if(Control.ModifierKeys == Keys.Control)
@@ -109,24 +117,6 @@ namespace SimpleMarkdown
             {
                 Trace.WriteLine(e);
             }
-        }
-
-        private void textBox_TextChanged(object sender, EventArgs e)
-        {
-            var text = textBox.Text.Replace("\r\n", "\n").Replace("\n", "\r\n");
-            if (BodyText != text)
-            {
-                BodyText = text;
-                textBox.Text = BodyText;
-            }
-            else
-            {
-                return;
-            }
-            IsSaved = false;
-
-            var html = _markdownService.GenerateHtml(textBox.Text);
-            _browser.SetContent(html);
         }
 
         private void 열기ToolStripMenuItem_Click(object sender, EventArgs e)
