@@ -5,6 +5,7 @@ using System.IO;
 using System.Diagnostics;
 using SimpleMarkdown.Properties;
 using SimpleMarkdown.Models;
+using SimpleMarkdown.Models.FileSaveStrategy;
 using SimpleMarkdown.Utils;
 
 namespace SimpleMarkdown
@@ -16,7 +17,7 @@ namespace SimpleMarkdown
         private readonly TextBoxWrapper _editorTextBox;
         private readonly ReadMeService _readMeService;
 
-        private bool isTempFile;
+        private ISaveStrategy _saveStrategy;
 
         private string currentFilePath_;
         private string CurrentFilePath
@@ -76,7 +77,7 @@ namespace SimpleMarkdown
                     Trace.WriteLine(e.Message);
                 }
                 CurrentFilePath = "새 문서";
-                isTempFile = true;
+                _saveStrategy = new TempFileSaveStrategy();
                 IsSaved = true;
             }
         }
@@ -102,7 +103,7 @@ namespace SimpleMarkdown
             try
             {
                 textBox.Text = File.ReadAllText(filePath);
-                isTempFile = false;
+                _saveStrategy = new ExistFileSaveStrategy(filePath);
                 IsSaved = true;
             }
             catch (Exception e)
@@ -139,39 +140,22 @@ namespace SimpleMarkdown
 
         private void SaveFile()
         {
-            if (isTempFile)
+            try
             {
-                var dialog = new SaveFileDialog()
-                {
-                    FileName = "새 문서",
-                    Filter = "마크다운 문서|*.md|텍스트 파일|*.txt|파일|*.*"
-                };
-                if (dialog.ShowDialog() == DialogResult.OK)
-                {
-                    try
-                    {
-                        File.WriteAllText(dialog.FileName, textBox.Text);
-                        CurrentFilePath = dialog.FileName;
-                        IsSaved = true;
-                        isTempFile = false;
-                    }
-                    catch (Exception e)
-                    {
-                        MessageBox.Show(e.Message);
-                    }
-                }
+                var result = _saveStrategy.Save(textBox.Text);
+
+                if (result.IsCanceled)
+                    return;
+
+                CurrentFilePath = result.SavePath;
+                IsSaved = true;
+
+                if (_saveStrategy is TempFileSaveStrategy)
+                    _saveStrategy = new ExistFileSaveStrategy(result.SavePath);
             }
-            else
+            catch (Exception e)
             {
-                try
-                {
-                    File.WriteAllText(CurrentFilePath, textBox.Text);
-                    IsSaved = true;
-                }
-                catch (Exception e)
-                {
-                    MessageBox.Show(e.Message);
-                }
+                MessageBox.Show(e.Message);
             }
         }
 
