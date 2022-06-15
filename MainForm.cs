@@ -112,27 +112,6 @@ namespace SimpleMarkdown
             }
         }
 
-        private void 열기ToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            var dialog = new OpenFileDialog();
-            if (dialog.ShowDialog() == DialogResult.OK)
-            {
-                if (!IsSaved)
-                {
-                    var result = MessageBox.Show("파일을 저장하시겠습니까?", "정보", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Information);
-                    if (result == DialogResult.Yes)
-                    {
-                        SaveFile();
-                    }
-                    else if (result == DialogResult.Cancel)
-                    {
-                        return;
-                    }
-                }
-                InitOpenFile(dialog.FileName);
-            }
-        }
-
         private void 저장ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             SaveFile();
@@ -158,9 +137,29 @@ namespace SimpleMarkdown
                 MessageBox.Show(e.Message);
             }
         }
+        private void 열기ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var dialog = new OpenFileDialog();
+            if (dialog.ShowDialog() == DialogResult.OK)
+            {
+                var result = SaveForCloseCurrentDocument();
+                if (!result)
+                    return;
+
+                InitOpenFile(dialog.FileName);
+            }
+        }
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
+            var result = SaveForCloseCurrentDocument();
+            if (!result)
+                e.Cancel = true;
+        }
+
+        private bool SaveForCloseCurrentDocument()
+        {
+            bool success = true;
             if (!IsSaved)
             {
                 var result = MessageBox.Show("파일을 저장하시겠습니까?", "정보", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Information);
@@ -169,14 +168,15 @@ namespace SimpleMarkdown
                     SaveFile();
                     if (!IsSaved)
                     {
-                        e.Cancel = true;
+                        success = false;
                     }
                 }
                 else if (result == DialogResult.Cancel)
                 {
-                    e.Cancel = true;
+                    success = false;
                 }
             }
+            return success;
         }
 
         private void 새로만들기ToolStripMenuItem_Click(object sender, EventArgs e)
