@@ -153,6 +153,8 @@
 xcopy "$(SolutionDir)Resources\*.*" "$(TargetDir)\Resources" /y</PreBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PostBuildEvent>makensis "$(ProjectDir)Setup\setup.nsi"</PostBuildEvent>
+    <PostBuildEvent>if $(ConfigurationName) == Release (
+  makensis "$(ProjectDir)Setup\setup.nsi"
+)</PostBuildEvent>
   </PropertyGroup>
 </Project>
