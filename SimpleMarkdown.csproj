@@ -115,6 +115,7 @@
     <Compile Include="Models\MarkdownService.cs" />
     <Compile Include="Models\ReadMeService.cs" />
     <Compile Include="Program.cs" />
+    <Compile Include="Models\ProgramState.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Models\FileSaveStrategy\TempFileSaveStrategy.cs" />
     <Compile Include="Utils\TextBoxTabSizeSetter.cs" />

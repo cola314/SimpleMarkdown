@@ -19,32 +19,7 @@ namespace SimpleMarkdown
 
         private ISaveStrategy _saveStrategy;
 
-        private string currentFilePath_;
-        private string CurrentFilePath
-        {
-            get { return currentFilePath_; }
-            set
-            {
-                currentFilePath_ = value;
-                RefreshTitle();
-            }
-        }
-
-        private bool isSaved_;
-        private bool IsSaved
-        {
-            get { return isSaved_; }
-            set
-            {
-                isSaved_ = value;
-                RefreshTitle();
-            }
-        }
-
-        private void RefreshTitle()
-        {
-            Text = $"{(!IsSaved ? "*" : "")}{Path.GetFileName(CurrentFilePath)} - SimpleMarkdown";
-        }
+        private readonly ProgramState _programState;
 
         public MainForm(string filePath, MarkdownService markdownService, ReadMeService readMeService)
         {
@@ -57,6 +32,9 @@ namespace SimpleMarkdown
             _browser = new WebBrowserWrapper(webBrowser);
             _editorTextBox = new TextBoxWrapper(textBox);
             _editorTextBox.OnTextChanged += EditorTextBoxOnOnTextChanged;
+
+            _programState = new ProgramState();
+            _programState.OnStateChanged += ProgramStateOnOnStateChanged;
 
             TextBoxTabSizeSetter.SetTabWidth(textBox, 4);
 
@@ -76,17 +54,22 @@ namespace SimpleMarkdown
                 {
                     Trace.WriteLine(e.Message);
                 }
-                CurrentFilePath = "새 문서";
+                _programState.NewFileOpened();
                 _saveStrategy = new TempFileSaveStrategy();
-                IsSaved = true;
             }
+        }
+
+        private void ProgramStateOnOnStateChanged()
+        {
+            var saveMark = _programState.IsSaved ? "" : "*";
+            Text = string.Format("{0}{1} - SimpleMarkdown", saveMark, _programState.CurrentFileName);
         }
 
         private void EditorTextBoxOnOnTextChanged(string newText)
         {
             var html = _markdownService.GenerateHtml(newText);
             _browser.SetContent(html);
-            IsSaved = false;
+            _programState.TextChanged();
         }
 
         private void MainForm_MouseWheel(object sender, MouseEventArgs e)
@@ -99,44 +82,45 @@ namespace SimpleMarkdown
 
         private void InitOpenFile(string filePath)
         {
-            CurrentFilePath = filePath;
             try
             {
                 textBox.Text = File.ReadAllText(filePath);
+
                 _saveStrategy = new ExistFileSaveStrategy(filePath);
-                IsSaved = true;
+                _programState.FileOpened(filePath);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Trace.WriteLine(e);
+                MessageBox.Show(ex.Message, "파일 열기에 실패했습니다");
+                Close();
             }
         }
 
         private void 저장ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            SaveFile();
+            try
+            {
+                SaveFile();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "파일 저장에 실패했습니다");
+            }
         }
 
         private void SaveFile()
         {
-            try
-            {
-                var result = _saveStrategy.Save(textBox.Text);
+            var result = _saveStrategy.Save(textBox.Text);
 
-                if (result.IsCanceled)
-                    return;
+            if (result.IsCanceled)
+                return;
 
-                CurrentFilePath = result.SavePath;
-                IsSaved = true;
-
-                if (_saveStrategy is TempFileSaveStrategy)
-                    _saveStrategy = new ExistFileSaveStrategy(result.SavePath);
-            }
-            catch (Exception e)
-            {
-                MessageBox.Show(e.Message);
-            }
+            _programState.FileSaved(result.SavePath);
+            
+            if (_saveStrategy is TempFileSaveStrategy)
+                _saveStrategy = new ExistFileSaveStrategy(result.SavePath);
         }
+
         private void 열기ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var dialog = new OpenFileDialog();
@@ -160,14 +144,18 @@ namespace SimpleMarkdown
         private bool SaveForCloseCurrentDocument()
         {
             bool success = true;
-            if (!IsSaved)
+            if (!_programState.IsSaved)
             {
                 var result = MessageBox.Show("파일을 저장하시겠습니까?", "정보", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Information);
                 if (result == DialogResult.Yes)
                 {
-                    SaveFile();
-                    if (!IsSaved)
+                    try
                     {
+                        SaveFile();
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.Message, "파일 저장에 실패했습니다");
                         success = false;
                     }
                 }
