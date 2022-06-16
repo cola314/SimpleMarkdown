@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 
 namespace SimpleMarkdown.Models.FileSaveStrategy
 {
@@ -13,9 +14,15 @@ namespace SimpleMarkdown.Models.FileSaveStrategy
 
         public SaveResult Save(string content)
         {
-            File.WriteAllText(_filePath, content);
-
-            return SaveResult.Success(_filePath);
+            try
+            {
+                File.WriteAllText(_filePath, content);
+                return SaveResult.Success(_filePath);
+            }
+            catch (Exception ex)
+            {
+                return SaveResult.Error(ex);
+            }
         }
     }
 }

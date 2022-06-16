@@ -103,27 +103,26 @@ namespace SimpleMarkdown
 
         private void 저장ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            try
-            {
-                SaveFile();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message, Resources.FAIL_TO_SAVE_FILE);
-            }
+            SaveFile();
         }
 
-        private void SaveFile()
+        private SaveResult SaveFile()
         {
             var result = _saveStrategy.Save(textBox.Text);
 
-            if (result.IsCanceled)
-                return;
+            if (result.IsSuccess)
+            {
+                _programState.FileSaved(result.SavePath);
 
-            _programState.FileSaved(result.SavePath);
+                if (_saveStrategy is TempFileSaveStrategy)
+                    _saveStrategy = new ExistFileSaveStrategy(result.SavePath);
+            }
+            else if (result.IsFailed)
+            {
+                MessageBox.Show(result.Exception.Message, Resources.FAIL_TO_SAVE_FILE);
+            }
 
-            if (_saveStrategy is TempFileSaveStrategy)
-                _saveStrategy = new ExistFileSaveStrategy(result.SavePath);
+            return result;
         }
 
         private void 열기ToolStripMenuItem_Click(object sender, EventArgs e)
@@ -154,15 +153,7 @@ namespace SimpleMarkdown
                 var result = MessageBox.Show(Resources.SAVE_FILE_MESSAGE, Resources.SIMPLE_MARKDOWN, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Information);
                 if (result == DialogResult.Yes)
                 {
-                    try
-                    {
-                        SaveFile();
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show(ex.Message, Resources.FAIL_TO_SAVE_FILE);
-                        success = false;
-                    }
+                    success = SaveFile().IsSuccess;
                 }
                 else if (result == DialogResult.Cancel)
                 {
