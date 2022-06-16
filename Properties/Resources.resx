@@ -121,4 +121,22 @@
   <data name="icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\icon.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="String1" xml:space="preserve">
+    <value />
+  </data>
+  <data name="FAIL_TO_OPEN_FILE" xml:space="preserve">
+	  <value>파일 열기에 실패했습니다</value>
+  </data>
+  <data name="FAIL_TO_SAVE_FILE" xml:space="preserve">
+	  <value>파일 저장에 실패했습니다</value>
+  </data>
+  <data name="SIMPLE_MARKDOWN" xml:space="preserve">
+	  <value>SimpleMarkdown</value>
+  </data>
+  <data name="SAVE_FILE_MESSAGE" xml:space="preserve">
+	  <value>파일을 저장하시겠습니까?</value>
+  </data>
+  <data name="PROGRAM_TITLE_FORMAT" xml:space="preserve">
+	  <value>{0}{1} - SimpleMarkdown</value>
+  </data>
 </root>

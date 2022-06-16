@@ -34,7 +34,7 @@ namespace SimpleMarkdown
             _editorTextBox.OnTextChanged += EditorTextBoxOnOnTextChanged;
 
             _programState = new ProgramState();
-            _programState.OnStateChanged += ProgramStateOnOnStateChanged;
+            _programState.StateChanged += ProgramStateOnStateChanged;
 
             TextBoxTabSizeSetter.SetTabWidth(textBox, 4);
 
@@ -46,23 +46,14 @@ namespace SimpleMarkdown
             }
             else
             {
-                try
-                {
-                    textBox.Text = _readMeService.GetReadMeContent();
-                }
-                catch (Exception e)
-                {
-                    Trace.WriteLine(e.Message);
-                }
-                _programState.NewFileOpened();
-                _saveStrategy = new TempFileSaveStrategy();
+                InitNewFile();
             }
         }
 
-        private void ProgramStateOnOnStateChanged()
+        private void ProgramStateOnStateChanged()
         {
             var saveMark = _programState.IsSaved ? "" : "*";
-            Text = string.Format("{0}{1} - SimpleMarkdown", saveMark, _programState.CurrentFileName);
+            Text = string.Format(Resources.PROGRAM_TITLE_FORMAT, saveMark, _programState.CurrentFileName);
         }
 
         private void EditorTextBoxOnOnTextChanged(string newText)
@@ -91,9 +82,23 @@ namespace SimpleMarkdown
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "파일 열기에 실패했습니다");
+                MessageBox.Show(ex.Message, Resources.FAIL_TO_OPEN_FILE);
                 Close();
             }
+        }
+
+        private void InitNewFile()
+        {
+            try
+            {
+                textBox.Text = _readMeService.GetReadMeContent();
+            }
+            catch (Exception e)
+            {
+                Trace.WriteLine(e.Message);
+            }
+            _saveStrategy = new TempFileSaveStrategy();
+            _programState.NewFileOpened();
         }
 
         private void 저장ToolStripMenuItem_Click(object sender, EventArgs e)
@@ -104,7 +109,7 @@ namespace SimpleMarkdown
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "파일 저장에 실패했습니다");
+                MessageBox.Show(ex.Message, Resources.FAIL_TO_SAVE_FILE);
             }
         }
 
@@ -116,7 +121,7 @@ namespace SimpleMarkdown
                 return;
 
             _programState.FileSaved(result.SavePath);
-            
+
             if (_saveStrategy is TempFileSaveStrategy)
                 _saveStrategy = new ExistFileSaveStrategy(result.SavePath);
         }
@@ -126,7 +131,7 @@ namespace SimpleMarkdown
             var dialog = new OpenFileDialog();
             if (dialog.ShowDialog() == DialogResult.OK)
             {
-                var result = SaveForCloseCurrentDocument();
+                var result = CloseCurrentDocument();
                 if (!result)
                     return;
 
@@ -136,17 +141,17 @@ namespace SimpleMarkdown
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            var result = SaveForCloseCurrentDocument();
+            var result = CloseCurrentDocument();
             if (!result)
                 e.Cancel = true;
         }
 
-        private bool SaveForCloseCurrentDocument()
+        private bool CloseCurrentDocument()
         {
             bool success = true;
             if (!_programState.IsSaved)
             {
-                var result = MessageBox.Show("파일을 저장하시겠습니까?", "정보", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Information);
+                var result = MessageBox.Show(Resources.SAVE_FILE_MESSAGE, Resources.SIMPLE_MARKDOWN, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Information);
                 if (result == DialogResult.Yes)
                 {
                     try
@@ -155,7 +160,7 @@ namespace SimpleMarkdown
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show(ex.Message, "파일 저장에 실패했습니다");
+                        MessageBox.Show(ex.Message, Resources.FAIL_TO_SAVE_FILE);
                         success = false;
                     }
                 }

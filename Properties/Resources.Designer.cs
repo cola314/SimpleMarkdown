@@ -19,7 +19,7 @@ namespace SimpleMarkdown.Properties {
     // 클래스에서 자동으로 생성되었습니다.
     // 멤버를 추가하거나 제거하려면 .ResX 파일을 편집한 다음 /str 옵션을 사용하여 ResGen을
     // 다시 실행하거나 VS 프로젝트를 다시 빌드하십시오.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -61,12 +61,66 @@ namespace SimpleMarkdown.Properties {
         }
         
         /// <summary>
+        ///   파일 열기에 실패했습니다과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        internal static string FAIL_TO_OPEN_FILE {
+            get {
+                return ResourceManager.GetString("FAIL_TO_OPEN_FILE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   파일 저장에 실패했습니다과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        internal static string FAIL_TO_SAVE_FILE {
+            get {
+                return ResourceManager.GetString("FAIL_TO_SAVE_FILE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   (아이콘)과(와) 유사한 System.Drawing.Icon 형식의 지역화된 리소스를 찾습니다.
         /// </summary>
         internal static System.Drawing.Icon icon {
             get {
                 object obj = ResourceManager.GetObject("icon", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   {0}{1} - SimpleMarkdown과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        internal static string PROGRAM_TITLE_FORMAT {
+            get {
+                return ResourceManager.GetString("PROGRAM_TITLE_FORMAT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   파일을 저장하시겠습니까?과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        internal static string SAVE_FILE_MESSAGE {
+            get {
+                return ResourceManager.GetString("SAVE_FILE_MESSAGE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   SimpleMarkdown과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        internal static string SIMPLE_MARKDOWN {
+            get {
+                return ResourceManager.GetString("SIMPLE_MARKDOWN", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        internal static string String1 {
+            get {
+                return ResourceManager.GetString("String1", resourceCulture);
             }
         }
     }

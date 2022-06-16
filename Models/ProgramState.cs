@@ -5,17 +5,17 @@ namespace SimpleMarkdown.Models
 {
     public class ProgramState
     {
-        public event Action OnStateChanged;
+        public event Action StateChanged;
 
         public string CurrentFileName { get; private set; }
         public bool IsSaved { get; private set; }
 
         private void NotifyStateChanged()
         {
-            OnStateChanged?.Invoke();
+            StateChanged?.Invoke();
         }
 
-        public void ExistFileOpened(string filePath)
+        public void FileOpened(string filePath)
         {
             CurrentFileName = Path.GetFileName(filePath);
             IsSaved = true;
