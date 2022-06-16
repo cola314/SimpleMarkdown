@@ -16,19 +16,12 @@ namespace SimpleMarkdown
         {
             // 프로그램 베이스 경로를 exe 파일이 있는 경로로 설정
             Directory.SetCurrentDirectory(AppDomain.CurrentDomain.BaseDirectory);
+            
+            string filePath = args?.FirstOrDefault();
 
-            try
-            {
-                string filePath = args?.FirstOrDefault();
-
-                Application.EnableVisualStyles();
-                Application.SetCompatibleTextRenderingDefault(false);
-                Application.Run(new MainForm(filePath, new MarkdownService(), new ReadMeService()));
-            }
-            catch(Exception e)
-            {
-                MessageBox.Show(e.Message);
-            }
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+            Application.Run(new MainForm(filePath, new MarkdownService(), new ReadMeService()));
         }
     }
 }
